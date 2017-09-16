@@ -7,6 +7,7 @@ import os.path
 import sys
 import logging
 import traceback
+import urlparse
 from simiki.compat import is_py2, unicode
 
 try:
@@ -91,6 +92,14 @@ class YARequestHandler(http_server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         # redirect url
+        logging.info('Rquest path: {0}'.format(self.path))
+
+        # Parse query data & params to find out what was passed
+        parsedParams = urlparse.urlparse(self.path)
+
+        # Change path to parsed path
+        self.path = parsedParams.path
+
         if URL_ROOT and not self.path.startswith(URL_ROOT):
             self.send_response(301)
             self.send_header('Location', URL_ROOT + self.path)

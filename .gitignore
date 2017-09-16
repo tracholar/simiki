@@ -40,3 +40,5 @@ nosetests.xml
 *.swp
 venv/
 .DS_Store
+.idea
+*.iml
