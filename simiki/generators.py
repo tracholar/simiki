@@ -419,6 +419,26 @@ class CatalogGenerator(BaseGenerator):
         html = self.env.get_template("index.html").render(tpl_vars)
         return html
 
+    def generate_search_html(self):
+        tpl_vars = self.get_template_vars()
+        html = self.env.get_template("search.html").render(tpl_vars)
+        return html
+
+    def generate_search_js(self):
+        tpl_vars = self.get_template_vars()
+        def clean_html_tag(html):
+            import jieba
+
+            html = re.sub(r'\<.*?\>|\n', ' ', html, flags=re.M)
+            html = html.replace('\\', '\\\\')
+            html = ' '.join(jieba.cut(html))
+            html = re.sub(r'"', r'\"', html)
+            return html
+
+        self.env.globals['clean_html_tag'] = clean_html_tag
+        js = self.env.get_template("tipuesearch_content.js").render(tpl_vars)
+        return js
+
 
 class FeedGenerator(BaseGenerator):
     def __init__(self, site_config, base_path, pages, feed_fn='atom.xml'):

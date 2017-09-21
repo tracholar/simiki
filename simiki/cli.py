@@ -185,6 +185,13 @@ class Generator(object):
         if not os.path.exists(os.path.join(self.config['source'], 'index.md')):
             self.generate_catalog(self.pages)
 
+        # for search page and data
+        if not os.path.exists(os.path.join(self.config['source'], 'search.md')):
+            self.generate_search(self.pages)
+
+        self.generate_search_data(self.pages)
+
+
         feed_fn = 'atom.xml'
         if os.path.exists(os.path.join(getcwdu(), feed_fn)):
             self.generate_feed(self.pages, feed_fn)
@@ -242,6 +249,32 @@ class Generator(object):
             "index.html"
         )
         write_file(ofile, html)
+
+    def generate_search(self, pages):
+        logger.info("Generate search page.")
+        catalog_generator = CatalogGenerator(self.config, self.target_path,
+                                             pages)
+        html = catalog_generator.generate_search_html()
+        ofile = os.path.join(
+            self.target_path,
+            self.config["destination"],
+            "search.html"
+        )
+        write_file(ofile, html)
+
+    def generate_search_data(self, pages):
+        logger.info("Generate search data.")
+
+        catalog_generator = CatalogGenerator(self.config, self.target_path,
+                                             pages)
+        js = catalog_generator.generate_search_js()
+
+        ofile = os.path.join(
+            self.target_path,
+            self.config["destination"],
+            "tipuesearch_content.js"
+        )
+        write_file(ofile, js)
 
     def generate_pages(self):
         logger.info("Start generating markdown files.")
